@@ -5,11 +5,12 @@ import * as cookieParser from 'cookie-parser';
 import login from '../views/login';
 import interaction from '../middleware/interaction';
 import loginInteraction from '../middleware/loginInteraction';
-import customInteractionCheck from '../middleware/customInteractionCheck';
+import customInteractionCheck from './customInteractionCheck';
 import twoFactor from '../views/twoFactor';
 import twoFactorInteraction from '../middleware/twoFactorInteraction';
 import { createConnection } from 'typeorm';
 import { User } from '../database/entity/user';
+import errorHandler from './errorHandler';
 
 createConnection().then(connection => {
 
@@ -28,6 +29,7 @@ createConnection().then(connection => {
     ];
 
   const configuration = {
+    renderError: errorHandler,
     interactionCheck: customInteractionCheck,
     interactionUrl: (ctx, interaction) => { // eslint-disable-line no-unused-vars
       return `/interaction/${ctx.oidc.uid}`;
