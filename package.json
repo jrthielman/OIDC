@@ -1,0 +1,22 @@
+{
+    "scripts": {
+        "dev": "ts-node ./src/server.ts",
+        "startauth": "nodemon ./src/security/oidc.ts",
+        "start": "nodemon ./src/routes.ts",
+        "lint": "tslint -p tsconfig.json -c tslint.json",
+        "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f ./src/ormconfig.ts"
+    },
+    "dependencies": {
+        "pg": "^7.10.0"
+    },
+    "devDependencies": {
+        "body-parser": "^1.19.0",
+        "cookie-parser": "^1.4.4",
+        "express": "^4.16.4",
+        "oidc-provider": "^6.0.0-alpha.4",
+        "path": "^0.12.7",
+        "pug": "^2.0.3",
+        "typeorm": "^0.2.17",
+        "typescript": "^3.4.5"
+    }
+}
