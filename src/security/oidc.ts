@@ -14,23 +14,34 @@ import { User } from '../database/entity/user';
 createConnection().then(connection => {
 
   const userRepository = connection.getRepository(User);
-  
+
   const oidcApi = express();
 
+  const clients =
+    [
+      {
+        client_id: '123',
+        client_secret: '123',
+        redirect_uris: ['http://localhost:2000/entrycode'],
+        // + other client properties
+      }
+    ];
+
   const configuration = {
-    // ... see available options /docs
-    clients: [{
-      client_id: '123',
-      client_secret: '123',
-      redirect_uris: ['http://localhost:2000/entrycode'],
-      // + other client properties
-    }],
-    interaction: customInteractionCheck, // Dit doet het nog niet. Even navragen
+    interactionCheck: customInteractionCheck,
     interactionUrl: (ctx, interaction) => { // eslint-disable-line no-unused-vars
       return `/interaction/${ctx.oidc.uid}`;
     },
+    async findById(ctx, id) { // De ID wordt per entity bepaald. De ID is de unieke identifier dat wordt meegegeven in de logininteraction
+      return {
+        accountId: id,
+        async claims() { return { sub: id }; },
+      };
+    },
     features: {
-      devInteractions: { enabled: false }
+      devInteractions: false,
+      clientCredentials: true,
+      introspection: true
     }
   };
 
@@ -39,37 +50,41 @@ createConnection().then(connection => {
 
   const oidc = new Provider(PATH, configuration);
 
-  const setProvider = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    res.locals.provider = oidc;
-    next();
-  }
-
-  const setRepositories = (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    res.locals.repositories = {
-      user: userRepository
+  oidc.initialize({ clients }).then(() => {
+    const setProvider = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      res.locals.provider = oidc;
+      next();
     }
-    next();
-  }
 
-  oidcApi.use('/', cookieParser())
+    const setRepositories = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      res.locals.repositories = {
+        user: userRepository
+      }
+      next();
+    }
 
-  oidcApi.use('/oauth', oidc.callback);
+    oidcApi.use('/', cookieParser())
 
-  oidcApi.use('/interaction', setProvider);
-  oidcApi.use('/interaction', setRepositories);
+    oidcApi.use('/oauth', oidc.callback);
 
-  oidcApi.use('/interaction/:grant', bodyParser.json())
-  oidcApi.get('/interaction/:grant', interaction);
-  
-  oidcApi.post('/interaction/:grant/login', bodyParser.urlencoded({extended: true}));
-  oidcApi.post('/interaction/:grant/login', loginInteraction);
-  oidcApi.get('/interaction/:grant/login', login);
-  
-  oidcApi.post('/interaction/:grant/twofactor', express.urlencoded({extended: true}));
-  oidcApi.post('/interaction/:grant/twofactor', twoFactorInteraction);
-  oidcApi.get('/interaction/:grant/twofactor', twoFactor);
+    oidcApi.use('/interaction', setProvider);
+    oidcApi.use('/interaction', setRepositories);
 
-  oidcApi.listen(PORT)
+    oidcApi.use('/interaction/:grant', bodyParser.json())
+    oidcApi.get('/interaction/:grant', interaction);
+
+    oidcApi.post('/interaction/:grant/login', bodyParser.urlencoded({ extended: true }));
+    oidcApi.post('/interaction/:grant/login', loginInteraction);
+    oidcApi.get('/interaction/:grant/login', login);
+
+    oidcApi.post('/interaction/:grant/twofactor', express.urlencoded({ extended: true }));
+    oidcApi.post('/interaction/:grant/twofactor', twoFactorInteraction);
+    oidcApi.get('/interaction/:grant/twofactor', twoFactor);
+
+    oidcApi.listen(PORT)
+  });
+
+
 });
 
 // or just expose a server standalone, see /examples/standalone.js

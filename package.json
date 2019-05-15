@@ -13,7 +13,7 @@
         "body-parser": "^1.19.0",
         "cookie-parser": "^1.4.4",
         "express": "^4.16.4",
-        "oidc-provider": "^6.0.0-alpha.4",
+        "oidc-provider": "5.4.2",
         "path": "^0.12.7",
         "pug": "^2.0.3",
         "typeorm": "^0.2.17",
