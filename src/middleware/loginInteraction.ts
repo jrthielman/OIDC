@@ -28,7 +28,7 @@ export default async (req: express.Request, res: express.Response, next: express
 
             res.cookie('result', result, { expires: false });
             await res.redirect(`/interaction/${details.uid}/twofactor`);
-            return
+            return;
         }
 
     }

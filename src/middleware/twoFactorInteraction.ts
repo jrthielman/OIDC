@@ -10,7 +10,7 @@ export default async (req: express.Request, res: express.Response, next: express
 
     if (twoFactor) {
         await provider.interactionFinished(req, res, req.cookies['result']);
-        await next();
+        return;
         
     } else {
         await res.redirect(`/interaction/${details.uid}/twofactor#1`);

@@ -1,6 +1,6 @@
 import * as express from 'express';
 
-export default async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export default async (ctx) => {
 
     console.log('in the custom interaction');
 
