@@ -6,7 +6,7 @@ export default (req: express.Request, res: express.Response, next: express.NextF
     <script>
         switch(window.location.hash){
             case "#1":
-                document.write('<div><p style="color:red">This password and username combination do not match</p></div>');
+                document.write('<div><p style="color:red">The given password and username combination do not match</p></div>');
                 break;
             default:
         }

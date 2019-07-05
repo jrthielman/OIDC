@@ -177,6 +177,12 @@ export default (ctx, error) => {
     .errorMessageContainer {
         text-align: center;
     }
+    
+    .errorMessage {
+        color: #ff0000;
+        font-weight: bold;
+    }
+    
     </style>
 </head>
 <body>
@@ -187,20 +193,14 @@ export default (ctx, error) => {
             <div class="contentContainer">
                 <h1>Er is iets misgegaan</h1>
                 <div class="errorMessageContainer">
-                    <p>${new Date()}</p>
-                    <p>${JSON.stringify(error, null, 4)}</p>
+                    <div>
+                        ${new Date().toLocaleTimeString()}
+                        ${new Date().toLocaleDateString()}
+                    </div>
+                    <p><span class="errorMessage">${error['error_description']}</span></p>
                 </div>
             </div>
             <div class='bottomRow'>
-            <hr class='contentDivider'/>
-                <div class='supportTextContainer'>
-                    <p>
-                        Werkt het niet? <a href="https://toegang.org/support">klik dan hier</a> of bel met onze helpdesk
-                    </p>
-                    <p>
-                        038-7114424
-                    </p>
-                </div>
             </div>
         </div>
     </div>

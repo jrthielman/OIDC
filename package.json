@@ -1,6 +1,5 @@
 {
     "scripts": {
-        "dev": "ts-node ./src/server.ts",
         "startauth": "nodemon ./src/security/oidc.ts",
         "start": "nodemon ./src/routes.ts",
         "lint": "tslint -p tsconfig.json -c tslint.json",

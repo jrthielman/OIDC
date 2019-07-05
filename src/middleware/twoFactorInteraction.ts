@@ -1,18 +1,15 @@
 import * as express from 'express';
 
 export default async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    
+
     console.log('In the 2FA interaction');
 
     const provider = res.locals.provider;
     const details = await provider.interactionDetails(req);
-    const { twoFactor } = req.body;
+    const {twoFactor} = req.body;
 
     if (twoFactor) {
-        await provider.interactionFinished(req, res, req.cookies['result']);
-        return;
-        
-    } else {
-        await res.redirect(`/interaction/${details.uid}/twofactor#1`);
+        return await provider.interactionFinished(req, res, req.cookies['result']);
     }
+    return await res.redirect(`/interaction/${details.uuid}/twofactor#1`);
 }

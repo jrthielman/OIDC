@@ -26,7 +26,7 @@ export default (req: express.Request, res: express.Response, next: express.NextF
 
         if (type === 'list') {
             console.log("list size: " + res.locals.data.size);
-        };
+        }
     }
 
     next();

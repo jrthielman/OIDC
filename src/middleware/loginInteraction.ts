@@ -21,19 +21,16 @@ export default async (req: express.Request, res: express.Response, next: express
                     acr: 'rookie',
                     remember: true,
                     ts: Date.now()
-                },
-                consent: {},
-                meta: { acr: 'rookie' }
-            }
+                }
+            };
 
             res.cookie('result', result, { expires: false });
-            await res.redirect(`/interaction/${details.uid}/twofactor`);
-            return;
+            return await res.redirect(`/interaction/${details.uuid}/twofactor`);
         }
 
     }
 
-    await res.redirect(`/interaction/${details.uid}/login#1`);
+    return await res.redirect(`/interaction/${details.uuid}/login#1`);
 }
 
 async function validateCredentials(username: string, password: string, userRepository: any): Promise<User> {
