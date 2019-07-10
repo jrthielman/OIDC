@@ -7,7 +7,9 @@ export default async (req: express.Request, res: express.Response, next: express
     const provider = res.locals.provider;
     const details = await provider.interactionDetails(req);
 
-    if(details.interaction.error === 'login_required'){
+    const {error} = details.interaction;
+
+    if(error === 'login_required'){
         await res.redirect(`/interaction/${details.uuid}/login`);
         return next();
     }

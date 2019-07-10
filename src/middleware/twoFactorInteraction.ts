@@ -8,7 +8,10 @@ export default async (req: express.Request, res: express.Response, next: express
     const details = await provider.interactionDetails(req);
     const {twoFactor} = req.body;
 
-    if (twoFactor) {
+    if (twoFactor === '1234'){
+        return await provider.interactionFinished(req, res, {error: 'login_required'})
+    }
+    else if (twoFactor) {
         return await provider.interactionFinished(req, res, req.cookies['result'])
     }
 

@@ -1,12 +1,12 @@
 import * as express from 'express';
-import { createConnection } from 'typeorm';
-import { User } from './database/entity/user';
+import {createConnection} from 'typeorm';
+import {User} from './database/entity/user';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import logging from './middleware/logging';
 import send from './middleware/send';
 import presetLocals from './middleware/presetLocals';
-import { Instance } from './singletons/instance';
+import {Instance} from './singletons/instance';
 import setSingletons from './middleware/setSingletons';
 import sessionsCheck from "./middleware/sessionsCheck";
 
@@ -29,8 +29,8 @@ createConnection().then(connection => {
                             <li><a href="http://localhost:1000/createinstance">Create instance</a></li>
                             <li><a href="http://localhost:1000/users">All registered users</a></li>
                             <li><a href="http://localhost:1000/register">Register a user</a></li>
-                            <li><p>Get specific user by adding their ID after users/add/:id</p></li>
-                            <li><p>Remove specific user by using their ID after users/add/:id</p></li>
+                            <li><p>Get specific user by adding their ID after users/:id</p></li>
+                            <li><p>Remove specific user by adding their ID after users/:id</p></li>
                             <li><p>Access token: ${req.cookies._session}</p></li>
                         </ul>`
         )
@@ -59,24 +59,29 @@ createConnection().then(connection => {
     app.post('/register', bodyParser.urlencoded({extended: true}));
     app.post("/register", async function (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
 
-        const { firstname, lastname, username, password } = req.body;
+        const {firstname, lastname, username, password} = req.body;
 
-        const user: User = await userRepository.findOne({ where: { username: username } });
+        const user: User = await userRepository.findOne({where: {username: username}});
 
         if (!user) {
             try {
-                const savedUser: User = await userRepository.save({firstname:firstname, lastname: lastname, username: username, password: password});
-                res.locals.data = { type: 'entity', body: savedUser };
+                const savedUser: User = await userRepository.save({
+                    firstname: firstname,
+                    lastname: lastname,
+                    username: username,
+                    password: password
+                });
+                res.locals.data = {type: 'entity', body: savedUser};
                 res.status(201);
                 next();
                 return;
-            }catch(e){
+            } catch (e) {
                 res.send(e);
                 return;
             }
         }
 
-        res.send({ error: 'This user already exists' });
+        res.send({error: 'This user already exists'});
         return;
 
     });
@@ -85,11 +90,11 @@ createConnection().then(connection => {
         const users: User[] = await userRepository.find();
 
         if (!users) {
-            res.send({ error: 'WE DO NOT HAVE ANY USERS LISTED' });
+            res.send({error: 'WE DO NOT HAVE ANY USERS LISTED'});
             return;
         }
 
-        res.locals.data = { type: 'list', body: users, size: users.length };
+        res.locals.data = {type: 'list', body: users, size: users.length};
         res.status(302);
         next();
     });
@@ -99,12 +104,12 @@ createConnection().then(connection => {
 
         if (!user) {
             res.status(404);
-            res.send({ error: 'USER NOT FOUND' });
+            res.send({error: 'USER NOT FOUND'});
             return;
         }
 
         res.status(302);
-        res.locals.data = { type: 'entity', body: user };
+        res.locals.data = {type: 'entity', body: user};
         next();
     });
 
@@ -115,11 +120,11 @@ createConnection().then(connection => {
             const createdUser = await userRepository.save(user);
 
             res.status(201);
-            res.locals.data = { type: 'entity', body: createdUser };
+            res.locals.data = {type: 'entity', body: createdUser};
             next();
         } catch (e) {
             res.status(400);
-            res.send({ error: e.message });
+            res.send({error: e.message});
             return;
         }
     });
@@ -130,7 +135,7 @@ createConnection().then(connection => {
 
         if (!user) {
             res.status(404);
-            res.send({ error: 'USER NOT FOUND' });
+            res.send({error: 'USER NOT FOUND'});
             return;
         }
 
@@ -138,7 +143,7 @@ createConnection().then(connection => {
         const savedUser = await userRepository.save(user);
 
         res.status(200);
-        res.locals.data = { type: 'entity', body: { old: oldUser, new: savedUser } };
+        res.locals.data = {type: 'entity', body: {old: oldUser, new: savedUser}};
         next();
     });
 
@@ -148,16 +153,25 @@ createConnection().then(connection => {
 
         if (!removedUser) {
             res.status(404);
-            res.send({ error: 'USER NOT FOUND' });
+            res.send({error: 'USER NOT FOUND'});
             return;
         }
 
         res.status(200);
-        res.locals.data = { type: "entity", body: removedUser };
+        res.locals.data = {type: "entity", body: removedUser};
         next();
     });
 
+    app.use('/*',  async function (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+        await res.redirect('/home')
+    });
+
+    app.use('*',  async function (req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
+        await res.redirect('/home')
+    });
+
     app.use(logging, send);
+
 
     // start express server
     app.listen(PORT, () => {
