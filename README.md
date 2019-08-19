@@ -1,6 +1,6 @@
 # OIDC
 
-Maak een database aan genaamd: test
+Maak een database aan genaamd: "test"
 
 Script commando's:
 <ul>
