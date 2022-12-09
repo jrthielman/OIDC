@@ -11,7 +11,7 @@
     "devDependencies": {
         "body-parser": "^1.19.0",
         "cookie-parser": "^1.4.4",
-        "express": "^4.16.4",
+        "express": "^4.17.3",
         "oidc-provider": "5.4.2",
         "path": "^0.12.7",
         "pug": "^2.0.3",
