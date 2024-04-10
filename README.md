@@ -8,4 +8,4 @@ Script commando's:
   <li>npm run start - service</li>
 </ul>
 
-Registreer een gebruiker via de service. Deze endpoint is niet beveiligd.
+Registreer een gebruiker via de service. Dit endpoint is niet beveiligd.
